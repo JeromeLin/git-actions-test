@@ -1,0 +1,63 @@
+name: PR Preview
+
+on: pull_request
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Cache packages
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-packages-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Restore packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-packages-${{ hashFiles('**/yarn.lock') }}
+
+      - name: build
+        run: yarn build
+    needs: setup
+
+  deploy:
+    name: pr deploy preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: upload surge service
+        id: deploy
+        run: |
+          export DEPLOY_DOMAIN=https://preview-${{ steps.pr.outputs.id }}-zarm-design.surge.sh
+          npx surge --project ./dist --domain $DEPLOY_DOMAIN --token ${{ secrets.SURGE_TOKEN }}
+
+      - name: update status comment
+        uses: actions-cool/maintain-one-comment@v1.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            [https://preview-${{ steps.pr.outputs.id }}-zarm-design.surge.sh](https://preview-${{ steps.pr.outputs.id }}-zarm-design.surge.sh)
+            <!-- AUTO_PREVIEW_HOOK -->
+          body-include: '<!-- AUTO_PREVIEW_HOOK -->'
+          number: ${{ steps.pr.outputs.id }}

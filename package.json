@@ -1,0 +1,20 @@
+{
+  "name": "git-actions-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "yarn clean && mkdir dist && cp index.html dist/index.html && echo 'deploy success'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeromeLin/git-actions-test.git"
+  },
+  "author": "16908091@qq.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JeromeLin/git-actions-test/issues"
+  },
+  "homepage": "https://github.com/JeromeLin/git-actions-test#readme"
+}
