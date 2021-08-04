@@ -61,6 +61,10 @@ jobs:
           path: dist
           key: dist-${{ github.sha }}
 
+      - name: Save PR ID
+        id: pr
+        run: echo "::set-output name=id::$(<pr-id.txt)"
+
       - name: Upload Surge Service
         id: deploy
         run: |
