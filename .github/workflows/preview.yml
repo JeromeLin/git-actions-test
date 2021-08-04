@@ -67,12 +67,26 @@ jobs:
           export DEPLOY_DOMAIN=https://preview-${{ github.event.number }}-zarm-design.surge.sh
           npx surge --project ./dist --domain $DEPLOY_DOMAIN --token ${{ secrets.SURGE_TOKEN }}
 
-      - name: Update Status Comment
+  comment:
+    name: Update Status Comment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment Preview URL
         uses: actions-cool/maintain-one-comment@v1.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             [https://preview-${{ github.event.number }}-zarm-design.surge.sh](https://preview-${{ github.event.number }}-zarm-design.surge.sh)
+            <!-- AUTO_PREVIEW_HOOK -->
+          body-include: '<!-- AUTO_PREVIEW_HOOK -->'
+          number: ${{ github.event.number }}
+      - name: Comment For Failed
+        if: ${{ failure() }}
+        uses: actions-cool/maintain-one-comment@v1.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            Preview Site Deploy Failed!
             <!-- AUTO_PREVIEW_HOOK -->
           body-include: '<!-- AUTO_PREVIEW_HOOK -->'
           number: ${{ github.event.number }}
