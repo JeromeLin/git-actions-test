@@ -66,6 +66,7 @@ jobs:
         run: |
           export DEPLOY_DOMAIN=https://preview-${{ github.event.number }}-zarm-design.surge.sh
           npx surge --project ./dist --domain $DEPLOY_DOMAIN --token ${{ secrets.SURGE_TOKEN }}
+    needs: setup
 
   comment:
     name: Update Status Comment
@@ -90,4 +91,4 @@ jobs:
             <!-- AUTO_PREVIEW_HOOK -->
           body-include: '<!-- AUTO_PREVIEW_HOOK -->'
           number: ${{ github.event.number }}
-    needs: build
+    needs: deploy
