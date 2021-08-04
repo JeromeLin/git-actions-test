@@ -24,7 +24,7 @@ jobs:
         run: yarn
 
   build:
-    name: build
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
     needs: setup
 
   deploy:
-    name: pr deploy preview
+    name: Deploy Preview
     runs-on: ubuntu-latest
     steps:
       - name: upload surge service
@@ -61,3 +61,4 @@ jobs:
             <!-- AUTO_PREVIEW_HOOK -->
           body-include: '<!-- AUTO_PREVIEW_HOOK -->'
           number: ${{ steps.pr.outputs.id }}
+    needs: build
