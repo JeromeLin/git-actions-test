@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "yarn clean && mkdir dist && cp index.html dist/index.html && echo 'deploy success'"
+    "build": "mkdir dist && cp index.html dist/index.html && echo 'deploy success'"
   },
   "repository": {
     "type": "git",
