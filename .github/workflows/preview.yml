@@ -38,6 +38,12 @@ jobs:
             */*/node_modules
           key: ${{ runner.os }}-packages-${{ hashFiles('**/yarn.lock') }}
 
+      - name: Cache dist
+        uses: actions/cache@v2
+        with:
+          path: dist
+          key: dist-${{ github.sha }}
+
       - name: build
         run: yarn build
     needs: setup
@@ -46,13 +52,22 @@ jobs:
     name: Deploy Preview
     runs-on: ubuntu-latest
     steps:
-      - name: upload surge service
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Restore dist
+        uses: actions/cache@v2
+        with:
+          path: dist
+          key: dist-${{ github.sha }}
+
+      - name: Upload Surge Service
         id: deploy
         run: |
           export DEPLOY_DOMAIN=https://preview-${{ steps.pr.outputs.id }}-zarm-design.surge.sh
           npx surge --project ./dist --domain $DEPLOY_DOMAIN --token ${{ secrets.SURGE_TOKEN }}
 
-      - name: update status comment
+      - name: Update Status Comment
         uses: actions-cool/maintain-one-comment@v1.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
